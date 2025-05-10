@@ -9,6 +9,7 @@ import (
 	"git.neds.sh/matty/entain/racing/db"
 	"git.neds.sh/matty/entain/racing/proto/racing"
 	"git.neds.sh/matty/entain/racing/service"
+	_ "github.com/mattn/go-sqlite3"
 	"google.golang.org/grpc"
 )
 
