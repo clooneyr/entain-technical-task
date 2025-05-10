@@ -92,11 +92,17 @@ Lists races with optional filtering capabilities.
       "name": "Race 1",
       "number": 1,
       "visible": true,
-      "advertised_start_time": "2024-03-20T10:00:00Z"
+      "advertised_start_time": "2024-03-20T10:00:00Z",
+      "status": "OPEN"  // New field: OPEN or CLOSED based on advertised_start_time
     }
   ]
 }
 ```
+
+**Race Status:**
+- `OPEN`: Race has not yet started (advertised_start_time is in the future)
+- `CLOSED`: Race has already started (advertised_start_time is in the past)
+- `UNSPECIFIED`: Status cannot be determined (advertised_start_time is nil)
 
 **Filter Options:**
 - `meeting_ids`: Array of meeting IDs to filter by. If not provided, returns races from all meetings.
@@ -265,6 +271,14 @@ go test ./... -v
 - Tests the gRPC service implementation
 - Verifies proper request/response handling
 - Tests error cases and edge conditions
+
+##### Status Layer (`racing/service/status_test.go`)
+- Tests race status calculation functionality
+- Verifies correct status for future races (OPEN)
+- Verifies correct status for past races (CLOSED)
+- Tests handling of nil advertised start times (UNSPECIFIED)
+- Ensures status is correctly calculated based on current time
+- Verifies status updates for multiple races in a list
 
 ##### Sorting Layer (`racing/service/sort_test.go`)
 - Tests sorting functionality for races
