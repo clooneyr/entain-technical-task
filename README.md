@@ -210,14 +210,4 @@ go test ./... -v
 - Includes helper functions for common test operations
 - Proper setup and teardown of test resources
 
-## Project Requirements
-
-The project implements several key features:
-
-1. Race filtering capabilities
-2. Race ordering by advertised start time
-3. Race status tracking (OPEN/CLOSED)
-4. Individual race retrieval
-5. Sports events service
-
 
