@@ -13,7 +13,6 @@ entain/
 │  ├─ db/              # Database related code
 │  ├─ proto/           # Protocol Buffer definitions
 │  ├─ service/         # Business logic
-│  ├─ tests/           # Test files
 │  ├─ main.go          # Main entry point
 ```
 
