@@ -63,6 +63,97 @@ curl -X "POST" "http://localhost:8000/v1/list-races" \
 }'
 ```
 
+## API Documentation
+
+### Racing Service
+
+#### List Races
+`POST /v1/list-races`
+
+Lists races with optional filtering capabilities.
+
+**Request Body:**
+```json
+{
+  "filter": {
+    "meeting_ids": [1, 2, 3],     // Optional: Filter by meeting IDs
+    "visible_only": true          // Optional: Filter by visibility
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "races": [
+    {
+      "id": 1,
+      "meeting_id": 1,
+      "name": "Race 1",
+      "number": 1,
+      "visible": true,
+      "advertised_start_time": "2024-03-20T10:00:00Z"
+    }
+  ]
+}
+```
+
+**Filter Options:**
+- `meeting_ids`: Array of meeting IDs to filter by. If not provided, returns races from all meetings.
+- `visible_only`: Boolean to filter by visibility:
+  - `true`: Returns only visible races
+  - `false`: Returns only non-visible races
+  - Not provided: Returns all races regardless of visibility
+
+**Example Requests:**
+
+1. Get all races:
+```bash
+curl -X "POST" "http://localhost:8000/v1/list-races" \
+     -H 'Content-Type: application/json' \
+     -d '{
+  "filter": {}
+}'
+```
+
+2. Get only visible races:
+```bash
+curl -X "POST" "http://localhost:8000/v1/list-races" \
+     -H 'Content-Type: application/json' \
+     -d '{
+  "filter": {
+    "visible_only": true
+  }
+}'
+```
+
+3. Get races for specific meetings:
+```bash
+curl -X "POST" "http://localhost:8000/v1/list-races" \
+     -H 'Content-Type: application/json' \
+     -d '{
+  "filter": {
+    "meeting_ids": [1, 2]
+  }
+}'
+```
+
+4. Combined filters:
+```bash
+curl -X "POST" "http://localhost:8000/v1/list-races" \
+     -H 'Content-Type: application/json' \
+     -d '{
+  "filter": {
+    "meeting_ids": [1, 2],
+    "visible_only": true
+  }
+}'
+```
+
+**Error Responses:**
+- `400 Bad Request`: Invalid filter parameters
+- `500 Internal Server Error`: Server-side error
+
 ## Features
 
 - List races with filtering capabilities
@@ -83,12 +174,41 @@ go generate ./...
 
 ### Testing
 
-The project includes tests in the `racing/tests` directory. Run the tests using:
+The project includes comprehensive test coverage across multiple layers. Run the tests using:
 
 ```bash
 cd racing
 go test ./... -v
 ```
+
+#### Test Coverage
+
+##### Database Layer (`racing/db/races_test.go`)
+- **Visibility Filter Tests**
+  - Tests filtering for visible races only
+  - Tests filtering for non-visible races only
+  - Tests retrieving all races (no visibility filter)
+  - Verifies correct race counts and visibility values
+
+- **Meeting ID Filter Tests**
+  - Tests filtering by specific meeting IDs
+  - Tests behavior with empty meeting ID list
+  - Verifies correct race counts and meeting ID matches
+
+- **Combined Filter Tests**
+  - Tests combining visibility and meeting ID filters
+  - Verifies correct filtering when multiple conditions are applied
+
+##### Service Layer (`racing/service/racing_test.go`)
+- Tests the gRPC service implementation
+- Verifies proper request/response handling
+- Tests error cases and edge conditions
+
+##### Test Infrastructure
+- Uses in-memory SQLite database for testing
+- Implements table-driven tests for comprehensive coverage
+- Includes helper functions for common test operations
+- Proper setup and teardown of test resources
 
 ## Project Requirements
 
