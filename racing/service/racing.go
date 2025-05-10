@@ -27,5 +27,8 @@ func (s *racingService) ListRaces(ctx context.Context, in *racing.ListRacesReque
 		return nil, err
 	}
 
-	return &racing.ListRacesResponse{Races: races}, nil
+	// Apply sorting
+	sortedRaces := SortRaces(races, in.Filter)
+
+	return &racing.ListRacesResponse{Races: sortedRaces}, nil
 }
