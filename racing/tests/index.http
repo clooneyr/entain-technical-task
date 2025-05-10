@@ -1,0 +1,27 @@
+### List Races
+POST http://localhost:8000/v1/list-races
+Content-Type: application/json
+
+{
+  "filter": {}
+}
+
+### List Races with Visible Only
+POST http://localhost:8000/v1/list-races
+Content-Type: application/json
+
+{
+  "filter": {
+    "visible_only": true
+  }
+}
+
+### List Races with Meeting ID
+POST http://localhost:8000/v1/list-races
+Content-Type: application/json
+
+{
+  "filter": {
+    "meeting_ids": [1]
+  }
+}
