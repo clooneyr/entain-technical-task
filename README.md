@@ -1,116 +1,103 @@
-## Entain BE Technical Test
+# Entain Racing Service
 
-This test has been designed to demonstrate your ability and understanding of technologies commonly used at Entain. 
+This repository contains a microservices-based racing application built with Go, gRPC, and Protocol Buffers. The application consists of two main services: an API gateway and a racing service.
 
-Please treat the services provided as if they would live in a real-world environment.
-
-### Directory Structure
-
-- `api`: A basic REST gateway, forwarding requests onto service(s).
-- `racing`: A very bare-bones racing service.
+## Project Structure
 
 ```
 entain/
-├─ api/
-│  ├─ proto/
-│  ├─ main.go
-├─ racing/
-│  ├─ db/
-│  ├─ proto/
-│  ├─ service/
-│  ├─ main.go
-├─ README.md
+├─ api/                 # API Gateway Service
+│  ├─ proto/           # Protocol Buffer definitions
+│  ├─ main.go          # Main entry point
+├─ racing/             # Racing Service
+│  ├─ db/              # Database related code
+│  ├─ proto/           # Protocol Buffer definitions
+│  ├─ service/         # Business logic
+│  ├─ tests/           # Test files
+│  ├─ main.go          # Main entry point
 ```
 
-### Getting Started
+## Prerequisites
 
-1. Install Go (latest).
+- Go (latest version)
+- Protocol Buffers (protoc)
+- gRPC tools
 
+## Installation
+
+1. Install Go:
 ```bash
 brew install go
 ```
 
-... or [see here](https://golang.org/doc/install).
-
-2. Install `protoc`
-
-```
+2. Install Protocol Buffers:
+```bash
 brew install protobuf
 ```
 
-... or [see here](https://grpc.io/docs/protoc-installation/).
+## Running the Services
 
-2. In a terminal window, start our racing service...
-
+1. Start the Racing Service:
 ```bash
-cd ./racing
-
+cd racing
 go build && ./racing
-➜ INFO[0000] gRPC server listening on: localhost:9000
+# The service will start on localhost:9000
 ```
 
-3. In another terminal window, start our api service...
-
+2. Start the API Gateway:
 ```bash
-cd ./api
-
+cd api
 go build && ./api
-➜ INFO[0000] API server listening on: localhost:8000
+# The service will start on localhost:8000
 ```
 
-4. Make a request for races... 
+## API Usage
+
+The API gateway exposes a REST endpoint that forwards requests to the racing service. Here's an example of how to use it:
 
 ```bash
 curl -X "POST" "http://localhost:8000/v1/list-races" \
      -H 'Content-Type: application/json' \
-     -d $'{
+     -d '{
   "filter": {}
 }'
 ```
 
-### Changes/Updates Required
+## Features
 
-- We'd like to see you push this repository up to **GitHub/Gitlab/Bitbucket** and lodge a **Pull/Merge Request for each** of the below tasks.
-- This means, we'd end up with **5x PR's** in total. **Each PR should target the previous**, so they build on one-another.
-- Alternatively you can merge each PR/MR after each other into master.
-- This will allow us to review your changes as well as we possibly can.
-- As your code will be reviewed by multiple people, it's preferred if the repository is **publicly accessible**. 
-- If making the repository public is not possible; you may choose to create a separate account or ask us for multiple email addresses which you can then add as viewers. 
+- List races with filtering capabilities
+- Race status tracking (OPEN/CLOSED based on advertised start time)
+- Race ordering by advertised start time
+- Individual race retrieval by ID
+- Sports events service (separate microservice)
 
-... and now to the test! Please complete the following tasks.
+## Development
 
-1. Add another filter to the existing RPC, so we can call `ListRaces` asking for races that are visible only.
-   > We'd like to continue to be able to fetch all races regardless of their visibility, so try naming your filter as logically as possible. https://cloud.google.com/apis/design/standard_methods#list
-2. We'd like to see the races returned, ordered by their `advertised_start_time`
-   > Bonus points if you allow the consumer to specify an ORDER/SORT-BY they might be after. 
-3. Our races require a new `status` field that is derived based on their `advertised_start_time`'s. The status is simply, `OPEN` or `CLOSED`. All races that have an `advertised_start_time` in the past should reflect `CLOSED`. 
-   > There's a number of ways this could be implemented. Just have a go!
-4. Introduce a new RPC, that allows us to fetch a single race by its ID.
-   > This link here might help you on your way: https://cloud.google.com/apis/design/standard_methods#get
-5. Create a `sports` service that for sake of simplicity, implements a similar API to racing. This sports API can be called `ListEvents`. We'll leave it up to you to determine what you might think a sports event is made up off, but it should at minimum have an `id`, a `name` and an `advertised_start_time`.
+### Protocol Buffer Generation
 
-> Note: this should be a separate service, not bolted onto the existing racing service. At an extremely high-level, the diagram below attempts to provide a visual representation showing the separation of services needed and flow of requests.
-> 
-> ![](example.png)
+After making changes to the proto files, regenerate the Go code by running:
 
-
-**Don't forget:**
-
-> Document and comment! Please make sure your work is appropriately documented/commented, so fellow developers know whats going on.
-
-**Note:**
-
-To aid in proto generation following any changes, you can run `go generate ./...` from `api` and `racing` directories.
-
-Before you do so, please ensure you have the following installed. You can simply run the following command below in each of `api` and `racing` directories.
-
-```
-go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2 google.golang.org/genproto/googleapis/api google.golang.org/grpc/cmd/protoc-gen-go-grpc google.golang.org/protobuf/cmd/protoc-gen-go
+```bash
+go generate ./...
 ```
 
-### Good Reading
+### Testing
 
-- [Protocol Buffers](https://developers.google.com/protocol-buffers)
-- [Google API Design](https://cloud.google.com/apis/design)
-- [Go Modules](https://golang.org/ref/mod)
-- [Ubers Go Style Guide](https://github.com/uber-go/guide/blob/2910ce2e11d0e0cba2cece2c60ae45e3a984ffe5/style.md)
+The project includes tests in the `racing/tests` directory. Run the tests using:
+
+```bash
+cd racing
+go test ./... -v
+```
+
+## Project Requirements
+
+The project implements several key features:
+
+1. Race filtering capabilities
+2. Race ordering by advertised start time
+3. Race status tracking (OPEN/CLOSED)
+4. Individual race retrieval
+5. Sports events service
+
+

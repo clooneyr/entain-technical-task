@@ -80,7 +80,7 @@ func (r *racesRepo) applyFilter(query string, filter *racing.ListRacesRequestFil
 		}
 	}
 
-	// Handles filtering races based on visibility when the visible_only filter is set to true
+	// Handles filtering races based on visibility when the visible_only filter is provided
 	if filter.VisibleOnly != nil {
 		clauses = append(clauses, "visible = ?")
 		args = append(args, *filter.VisibleOnly)
