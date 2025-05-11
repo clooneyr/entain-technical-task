@@ -238,6 +238,51 @@ func TestRacesRepo_List_CombinedFilters(t *testing.T) {
 	}
 }
 
+func TestRacesRepo_GetRace(t *testing.T) {
+	// Setup test database
+	db := setupTestDB(t)
+	defer db.Close()
+
+	// Create and initialize repository
+	repo := NewRacesRepo(db)
+	err := repo.Init()
+	require.NoError(t, err)
+
+	tests := []struct {
+		desc    string
+		id      int64
+		wantErr error
+	}{
+		{
+			desc:    "when race exists, returns race",
+			id:      1,
+			wantErr: nil,
+		},
+		{
+			desc:    "when race doesn't exist, returns error",
+			id:      999,
+			wantErr: sql.ErrNoRows,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.desc, func(t *testing.T) {
+			// Execute
+			got, err := repo.GetRace(tt.id)
+
+			// Verify
+			if tt.wantErr != nil {
+				require.Error(t, err)
+				assert.Equal(t, tt.wantErr, err)
+				return
+			}
+
+			require.NoError(t, err)
+			assert.Equal(t, tt.id, got.Id, "race ID should match")
+		})
+	}
+}
+
 // boolPtr returns a pointer to the given bool.
 func boolPtr(t *testing.T, b bool) *bool {
 	t.Helper()

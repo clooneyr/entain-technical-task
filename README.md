@@ -216,6 +216,42 @@ curl -X "POST" "http://localhost:8000/v1/list-races" \
 - `400 Bad Request`: Invalid filter parameters
 - `500 Internal Server Error`: Server-side error
 
+#### Get Race
+`GET /v1/races/{id}`
+
+Retrieves a single race by its ID.
+
+**Path Parameters:**
+- `id`: The unique identifier of the race to retrieve
+
+**Response:**
+```json
+{
+  "id": 1,
+  "meeting_id": 1,
+  "name": "Race 1",
+  "number": 1,
+  "visible": true,
+  "advertised_start_time": "2024-03-20T10:00:00Z",
+  "status": "OPEN"  // OPEN or CLOSED based on advertised_start_time
+}
+```
+
+**Race Status:**
+- `OPEN`: Race has not yet started (advertised_start_time is in the future)
+- `CLOSED`: Race has already started (advertised_start_time is in the past)
+- `UNSPECIFIED`: Status cannot be determined (advertised_start_time is nil)
+
+**Example Request:**
+```bash
+curl -X "GET" "http://localhost:8000/v1/races/1"
+```
+
+**Error Responses:**
+- `400 Bad Request`: Invalid race ID
+- `404 Not Found`: Race not found
+- `500 Internal Server Error`: Server-side error
+
 ## Features
 
 - List races with filtering capabilities
@@ -266,10 +302,25 @@ go test ./... -v
   - Tests combining visibility and meeting ID filters
   - Verifies correct filtering when multiple conditions are applied
 
+- **Get Race Tests**
+  - Tests successful race retrieval by ID
+  - Tests handling of non-existent race IDs
+  - Verifies proper error handling
+  - Tests timestamp conversion
+  - Ensures proper data mapping from database to proto
+
 ##### Service Layer (`racing/service/racing_test.go`)
 - Tests the gRPC service implementation
 - Verifies proper request/response handling
 - Tests error cases and edge conditions
+
+- **Get Race Tests**
+  - Tests retrieving a single race by ID
+  - Verifies successful race retrieval
+  - Tests handling of non-existent race IDs
+  - Verifies proper error status codes
+  - Tests race status calculation for single race
+  - Ensures proper error propagation from database layer
 
 ##### Status Layer (`racing/service/status_test.go`)
 - Tests race status calculation functionality

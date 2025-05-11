@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"database/sql"
 	"testing"
 	"time"
 
@@ -12,6 +13,8 @@ import (
 
 	"git.neds.sh/matty/entain/racing/db"
 	"git.neds.sh/matty/entain/racing/proto/racing"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 const (
@@ -34,6 +37,14 @@ func (m *RacesRepoMock) Init() error {
 func (m *RacesRepoMock) List(filter *racing.ListRacesRequestFilter) ([]*racing.Race, error) {
 	args := m.Called(filter)
 	return args.Get(0).([]*racing.Race), args.Error(1)
+}
+
+func (m *RacesRepoMock) GetRace(id int64) (*racing.Race, error) {
+	args := m.Called(id)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*racing.Race), args.Error(1)
 }
 
 // assertRacesEqual compares two slices of races, ignoring timestamps
@@ -197,6 +208,83 @@ func TestListRaces(t *testing.T) {
 
 			require.NoError(t, err)
 			assertRacesEqual(t, tt.wantRaces, got.Races)
+			mockRepo.AssertExpectations(t)
+		})
+	}
+}
+
+func TestGetRace(t *testing.T) {
+	// Create a fixed timestamp for testing
+	now := timestamppb.Now()
+
+	tests := []struct {
+		desc     string
+		id       int64
+		mockRace *racing.Race
+		wantRace *racing.Race
+		wantErr  error
+	}{
+		{
+			desc: "when race exists, returns race",
+			id:   1,
+			mockRace: &racing.Race{
+				Id:                  1,
+				Visible:             true,
+				Name:                "Race 1",
+				MeetingId:           100,
+				Number:              1,
+				AdvertisedStartTime: now,
+			},
+			wantRace: &racing.Race{
+				Id:                  1,
+				Visible:             true,
+				Name:                "Race 1",
+				MeetingId:           100,
+				Number:              1,
+				AdvertisedStartTime: now,
+			},
+			wantErr: nil,
+		},
+		{
+			desc:     "when race doesn't exist, returns error",
+			id:       999,
+			mockRace: nil,
+			wantRace: nil,
+			wantErr:  sql.ErrNoRows,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.desc, func(t *testing.T) {
+			// Setup
+			ctx, cancel := context.WithTimeout(context.Background(), defaultTimeout)
+			defer cancel()
+
+			mockRepo := new(RacesRepoMock)
+			mockRepo.On("GetRace", tt.id).Return(tt.mockRace, tt.wantErr)
+
+			svc := NewRacingService(mockRepo)
+
+			// Execute
+			got, err := svc.GetRace(ctx, &racing.GetRaceRequest{
+				Id: tt.id,
+			})
+
+			// Verify
+			if tt.wantErr != nil {
+				require.Error(t, err)
+				if tt.wantErr == sql.ErrNoRows {
+					assert.Equal(t, codes.NotFound, status.Code(err))
+				}
+				return
+			}
+
+			require.NoError(t, err)
+			assert.Equal(t, tt.wantRace.Id, got.Id)
+			assert.Equal(t, tt.wantRace.Visible, got.Visible)
+			assert.Equal(t, tt.wantRace.Name, got.Name)
+			assert.Equal(t, tt.wantRace.MeetingId, got.MeetingId)
+			assert.Equal(t, tt.wantRace.Number, got.Number)
 			mockRepo.AssertExpectations(t)
 		})
 	}
