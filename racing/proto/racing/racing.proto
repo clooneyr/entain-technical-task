@@ -8,6 +8,9 @@ import "google/protobuf/timestamp.proto";
 service Racing {
   // ListRaces will return a collection of all races.
   rpc ListRaces(ListRacesRequest) returns (ListRacesResponse) {}
+
+  // GetRace will return a single race by its ID.
+  rpc GetRace(GetRaceRequest) returns (Race) {}
 }
 
 /* Enums */
@@ -43,6 +46,12 @@ message ListRacesRequest {
 // Response to ListRaces call.
 message ListRacesResponse {
   repeated Race races = 1;
+}
+
+// Request to get a single race by ID
+message GetRaceRequest {
+  // ID of the race to retrieve
+  int64 id = 1;
 }
 
 // Filter for listing races.
