@@ -10,6 +10,21 @@ service Racing {
   rpc ListRaces(ListRacesRequest) returns (ListRacesResponse) {}
 }
 
+/* Enums */
+
+enum SortBy {
+  SORT_BY_UNSPECIFIED = 0;
+  SORT_BY_ADVERTISED_START_TIME = 1;
+  SORT_BY_NAME = 2;
+  SORT_BY_NUMBER = 3;
+}
+
+enum SortOrder {
+  SORT_ORDER_UNSPECIFIED = 0;
+  SORT_ORDER_ASC = 1;
+  SORT_ORDER_DESC = 2;
+}
+
 /* Requests/Responses */
 
 message ListRacesRequest {
@@ -30,6 +45,14 @@ message ListRacesRequestFilter {
   // When set to false, only races with visibility=false will be returned.
   // When not provided, both visible and non-visible races will be included.
   optional bool visible_only = 2; 
+
+  // sort_by specifies the field to sort by.
+  // When not provided, defaults to SORT_BY_ADVERTISED_START_TIME.
+  optional SortBy sort_by = 3;
+
+  // sort_order specifies the direction of sorting.
+  // When not provided, defaults to SORT_ORDER_ASC.
+  optional SortOrder sort_order = 4;
 }
 
 /* Resources */

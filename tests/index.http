@@ -25,3 +25,71 @@ Content-Type: application/json
     "meeting_ids": [1]
   }
 }
+
+### List Races with Default Sort (Advertised Start Time Ascending)
+POST http://localhost:8000/v1/list-races
+Content-Type: application/json
+
+{
+  "filter": {
+    "sort_by": "SORT_BY_ADVERTISED_START_TIME",
+    "sort_order": "SORT_ORDER_ASC"
+  }
+}
+
+### List Races with Advertised Start Time Descending
+POST http://localhost:8000/v1/list-races
+Content-Type: application/json
+
+{
+  "filter": {
+    "sort_by": "SORT_BY_ADVERTISED_START_TIME",
+    "sort_order": "SORT_ORDER_DESC"
+  }
+}
+
+### List Races with Name Ascending
+POST http://localhost:8000/v1/list-races
+Content-Type: application/json
+
+{
+  "filter": {
+    "sort_by": "SORT_BY_NAME",
+    "sort_order": "SORT_ORDER_ASC"
+  }
+}
+
+### List Races with Number Descending
+POST http://localhost:8000/v1/list-races
+Content-Type: application/json
+
+{
+  "filter": {
+    "sort_by": "SORT_BY_NUMBER",
+    "sort_order": "SORT_ORDER_DESC"
+  }
+}
+
+### List Races with Combined Filters (Visible Only + Sort)
+POST http://localhost:8000/v1/list-races
+Content-Type: application/json
+
+{
+  "filter": {
+    "visible_only": true,
+    "sort_by": "SORT_BY_ADVERTISED_START_TIME",
+    "sort_order": "SORT_ORDER_DESC"
+  }
+}
+
+### List Races with Meeting ID and Sort
+POST http://localhost:8000/v1/list-races
+Content-Type: application/json
+
+{
+  "filter": {
+    "meeting_ids": [1],
+    "sort_by": "SORT_BY_NUMBER",
+    "sort_order": "SORT_ORDER_ASC"
+  }
+}

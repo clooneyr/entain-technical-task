@@ -104,6 +104,13 @@ Lists races with optional filtering capabilities.
   - `true`: Returns only visible races
   - `false`: Returns only non-visible races
   - Not provided: Returns all races regardless of visibility
+- `sort_by`: Field to sort races by (optional):
+  - `SORT_BY_ADVERTISED_START_TIME`: Sort by race start time (default)
+  - `SORT_BY_NAME`: Sort by race name
+  - `SORT_BY_NUMBER`: Sort by race number
+- `sort_order`: Direction of sorting (optional):
+  - `SORT_ORDER_ASC`: Ascending order (default)
+  - `SORT_ORDER_DESC`: Descending order
 
 **Example Requests:**
 
@@ -150,6 +157,56 @@ curl -X "POST" "http://localhost:8000/v1/list-races" \
 }'
 ```
 
+5. Sort races by advertised start time (ascending):
+```bash
+curl -X "POST" "http://localhost:8000/v1/list-races" \
+     -H 'Content-Type: application/json' \
+     -d '{
+  "filter": {
+    "sort_by": "SORT_BY_ADVERTISED_START_TIME",
+    "sort_order": "SORT_ORDER_ASC"
+  }
+}'
+```
+
+6. Sort races by name (descending):
+```bash
+curl -X "POST" "http://localhost:8000/v1/list-races" \
+     -H 'Content-Type: application/json' \
+     -d '{
+  "filter": {
+    "sort_by": "SORT_BY_NAME",
+    "sort_order": "SORT_ORDER_DESC"
+  }
+}'
+```
+
+7. Sort races by number (ascending):
+```bash
+curl -X "POST" "http://localhost:8000/v1/list-races" \
+     -H 'Content-Type: application/json' \
+     -d '{
+  "filter": {
+    "sort_by": "SORT_BY_NUMBER",
+    "sort_order": "SORT_ORDER_ASC"
+  }
+}'
+```
+
+8. Combined filters with sorting:
+```bash
+curl -X "POST" "http://localhost:8000/v1/list-races" \
+     -H 'Content-Type: application/json' \
+     -d '{
+  "filter": {
+    "meeting_ids": [1, 2],
+    "visible_only": true,
+    "sort_by": "SORT_BY_ADVERTISED_START_TIME",
+    "sort_order": "SORT_ORDER_DESC"
+  }
+}'
+```
+
 **Error Responses:**
 - `400 Bad Request`: Invalid filter parameters
 - `500 Internal Server Error`: Server-side error
@@ -161,6 +218,11 @@ curl -X "POST" "http://localhost:8000/v1/list-races" \
 - Race ordering by advertised start time
 - Individual race retrieval by ID
 - Sports events service (separate microservice)
+- Flexible sorting options:
+  - Sort by advertised start time
+  - Sort by race name
+  - Sort by race number
+  - Ascending or descending order
 
 ## Development
 
@@ -203,6 +265,15 @@ go test ./... -v
 - Tests the gRPC service implementation
 - Verifies proper request/response handling
 - Tests error cases and edge conditions
+
+##### Sorting Layer (`racing/service/sort_test.go`)
+- Tests sorting functionality for races
+- Verifies sorting by advertised start time (default)
+- Tests sorting by name
+- Tests sorting by number
+- Verifies ascending and descending order
+- Handles edge cases like nil start times
+- Ensures proper sorting behavior with combined filters
 
 ##### Test Infrastructure
 - Uses in-memory SQLite database for testing
