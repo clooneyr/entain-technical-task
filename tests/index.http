@@ -93,3 +93,7 @@ Content-Type: application/json
     "sort_order": "SORT_ORDER_ASC"
   }
 }
+
+### Get Race by ID
+GET http://localhost:8000/v1/races/57
+Content-Type: application/json
