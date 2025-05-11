@@ -1,0 +1,88 @@
+syntax = "proto3";
+package sports;
+
+option go_package = "/sports";
+
+import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+
+service Sports {
+  // ListEvents returns a list of all sports events.
+  rpc ListEvents(ListEventsRequest) returns (ListEventsResponse) {
+    option (google.api.http) = { post: "/v1/list-events", body: "*" };
+  }
+}
+
+/* Enums */
+
+// SortBy specifies the field to sort by
+enum SortBy {
+  SORT_BY_UNSPECIFIED = 0;
+  SORT_BY_ADVERTISED_START_TIME = 1;
+  SORT_BY_NAME = 2;
+  SORT_BY_VENUE = 3;
+}
+
+// SortOrder specifies the direction of sorting
+enum SortOrder {
+  SORT_ORDER_UNSPECIFIED = 0;
+  SORT_ORDER_ASC = 1;
+  SORT_ORDER_DESC = 2;
+}
+
+// EventStatus represents whether an event is OPEN or CLOSED
+enum EventStatus {
+  UNSPECIFIED = 0;
+  OPEN = 1;
+  CLOSED = 2;
+}
+
+/* Requests/Responses */
+
+// Request for ListEvents call.
+message ListEventsRequest {
+  ListEventsRequestFilter filter = 1;
+}
+
+// Response to ListEvents call.
+message ListEventsResponse {
+  repeated Event events = 1;
+}
+
+// Filter for listing events.
+message ListEventsRequestFilter {
+  // visible_only determines whether to filter events based on visibility.
+  // When set to true, only events with visible=true will be returned.
+  bool visible_only = 1;
+
+  // sort_by specifies the field to sort by.
+  // When not provided, defaults to SORT_BY_ADVERTISED_START_TIME.
+  SortBy sort_by = 2;
+
+  // sort_order specifies the direction of sorting.
+  // When not provided, defaults to SORT_ORDER_ASC.
+  SortOrder sort_order = 3;
+}
+
+/* Resources */
+
+// An event resource.
+message Event {
+  // ID represents a unique identifier for the event.
+  int64 id = 1;
+  // Name is the official name given to the event.
+  string name = 2;
+  // AdvertisedStartTime is the time the event is advertised to run.
+  google.protobuf.Timestamp advertised_start_time = 3;
+  // Visible represents whether or not the event is visible.
+  bool visible = 4;
+  // Status represents whether the event is OPEN or CLOSED based on its advertised start time.
+  // An event is CLOSED if its advertised_start_time is in the past.
+  EventStatus status = 5;
+  // Venue where the event takes place
+  string venue = 6;
+  // SportType represents the type of sport (e.g., Soccer, Basketball)
+  string sport_type = 7;
+  // List of competitors in the event
+  repeated string competitors = 8;
+}

@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package sports;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "/sports";
+
+service Sports {
+  rpc ListEvents(ListEventsRequest) returns (ListEventsResponse) {}
+}
+
+message ListEventsRequest {
+  ListEventsRequestFilter filter = 1;
+}
+
+message ListEventsRequestFilter {
+  bool visible_only = 1;
+  SortBy sort_by = 2;
+  SortOrder sort_order = 3;
+}
+
+message ListEventsResponse {
+  repeated Event events = 1;
+}
+
+message Event {
+  int64 id = 1;
+  string name = 2;
+  google.protobuf.Timestamp advertised_start_time = 3;
+  bool visible = 4;
+  EventStatus status = 5;
+  string venue = 6;
+  string sport_type = 7;
+  repeated string competitors = 8;
+}
+
+enum SortBy {
+  SORT_BY_UNSPECIFIED = 0;
+  SORT_BY_ADVERTISED_START_TIME = 1;
+  SORT_BY_NAME = 2;
+  SORT_BY_VENUE = 3;
+}
+
+enum SortOrder {
+  SORT_ORDER_UNSPECIFIED = 0;
+  SORT_ORDER_ASC = 1;
+  SORT_ORDER_DESC = 2;
+}
+
+enum EventStatus {
+  UNSPECIFIED = 0;
+  OPEN = 1;
+  CLOSED = 2;
+}

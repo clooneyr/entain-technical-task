@@ -97,3 +97,78 @@ Content-Type: application/json
 ### Get Race by ID
 GET http://localhost:8000/v1/races/57
 Content-Type: application/json
+
+
+### List Events (Sports)
+POST http://localhost:8000/v1/list-events
+Content-Type: application/json
+
+{
+  "filter": {}
+}
+
+### List Events with Visible Only (Sports)
+POST http://localhost:8000/v1/list-events
+Content-Type: application/json
+
+{
+  "filter": {
+    "visible_only": true
+  }
+}
+
+### List Events with Default Sort (Advertised Start Time Ascending) (Sports)
+POST http://localhost:8000/v1/list-events
+Content-Type: application/json
+
+{
+  "filter": {
+    "sort_by": "SORT_BY_ADVERTISED_START_TIME",
+    "sort_order": "SORT_ORDER_ASC"
+  }
+}
+
+### List Events with Advertised Start Time Descending (Sports)
+POST http://localhost:8000/v1/list-events
+Content-Type: application/json
+
+{
+  "filter": {
+    "sort_by": "SORT_BY_ADVERTISED_START_TIME", 
+    "sort_order": "SORT_ORDER_DESC"
+  }
+}
+
+### List Events with Name Ascending (Sports)
+POST http://localhost:8000/v1/list-events
+Content-Type: application/json
+
+{
+  "filter": {
+    "sort_by": "SORT_BY_NAME",
+    "sort_order": "SORT_ORDER_ASC"
+  }
+}
+
+### List Events with Venue Descending (Sports)
+POST http://localhost:8000/v1/list-events
+Content-Type: application/json
+
+{
+  "filter": {
+    "sort_by": "SORT_BY_VENUE",
+    "sort_order": "SORT_ORDER_DESC"
+  }
+}
+
+### List Events with Combined Filters (Visible Only + Sort) (Sports)
+POST http://localhost:8000/v1/list-events
+Content-Type: application/json
+
+{
+  "filter": {
+    "visible_only": true,
+    "sort_by": "SORT_BY_ADVERTISED_START_TIME",
+    "sort_order": "SORT_ORDER_DESC"
+  }
+}
