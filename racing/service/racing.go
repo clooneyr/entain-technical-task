@@ -27,6 +27,9 @@ func (s *racingService) ListRaces(ctx context.Context, in *racing.ListRacesReque
 		return nil, err
 	}
 
+	// Update statuses
+	races = UpdateRacesStatus(races)
+
 	// Apply sorting
 	sortedRaces := SortRaces(races, in.Filter)
 

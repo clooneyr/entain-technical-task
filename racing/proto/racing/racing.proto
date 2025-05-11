@@ -12,6 +12,7 @@ service Racing {
 
 /* Enums */
 
+// SortBy specifies the field to sort by
 enum SortBy {
   SORT_BY_UNSPECIFIED = 0;
   SORT_BY_ADVERTISED_START_TIME = 1;
@@ -19,10 +20,18 @@ enum SortBy {
   SORT_BY_NUMBER = 3;
 }
 
+// SortOrder specifies the direction of sorting
 enum SortOrder {
   SORT_ORDER_UNSPECIFIED = 0;
   SORT_ORDER_ASC = 1;
   SORT_ORDER_DESC = 2;
+}
+
+// RaceStatus represents whether a race is OPEN or CLOSED
+enum RaceStatus {
+  UNSPECIFIED = 0;
+  OPEN = 1;
+  CLOSED = 2;
 }
 
 /* Requests/Responses */
@@ -71,5 +80,8 @@ message Race {
   bool visible = 5;
   // AdvertisedStartTime is the time the race is advertised to run.
   google.protobuf.Timestamp advertised_start_time = 6;
+  // Status represents whether the race is OPEN or CLOSED based on its advertised start time.
+  // A race is CLOSED if its advertised_start_time is in the past.
+  RaceStatus status = 7;
 }
 
