@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"strings"
 	"sync"
@@ -184,7 +185,6 @@ func (r *eventsRepo) scanEvents(rows *sql.Rows) ([]*sports.Event, error) {
 			event           sports.Event
 			advertisedStart time.Time
 			competitorsJSON string
-			competitors     []string
 		)
 
 		if err := rows.Scan(
@@ -200,11 +200,10 @@ func (r *eventsRepo) scanEvents(rows *sql.Rows) ([]*sports.Event, error) {
 		}
 
 		// Parse JSON competitors list
-		competitorsJSON = strings.Trim(competitorsJSON, "[]\"")
 		if competitorsJSON != "" {
-			competitors = strings.Split(strings.ReplaceAll(competitorsJSON, "\"", ""), ",")
-			for i, c := range competitors {
-				competitors[i] = strings.TrimSpace(c)
+			var competitors []string
+			if err := json.Unmarshal([]byte(competitorsJSON), &competitors); err != nil {
+				return nil, fmt.Errorf("failed to parse competitors JSON: %w", err)
 			}
 			event.Competitors = competitors
 		}
